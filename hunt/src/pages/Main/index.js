@@ -13,7 +13,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const Main = () => {
+const Main = ({navigation, ...rest}) => {
   const [products, setProducts] = useState([]);
   const [pages, setPages] = useState(0);
   const [page, setPage] = useState(1);
@@ -25,9 +25,7 @@ const Main = () => {
       const response = await api.get(`/products?page=${page}`);
       if (mounted) {
         setPages(Number(response.data.pages));
-        let newList = [...products, response.data.docs];
-        console.log(newList.length);
-        setProducts(response.data.docs);
+        setProducts([...products, ...response.data.docs]);
       }
     };
 
@@ -36,23 +34,22 @@ const Main = () => {
     return () => {
       mounted = false;
     };
-  }, []);
+  }, [page]);
 
   const loadMore = () => {
-    if (page === pages) setPage(1);
-    else setPage(page + 1);
+    if (page === pages) return;
+    setPage(page + 1);
   };
 
   return (
     <View style={styles.container}>
-      <Text>
-        Pagina:{page} de {pages}
-      </Text>
       <FlatList
         contentContainerStyle={styles.list}
         data={products}
         keyExtractor={(item) => item._id}
-        renderItem={({item}) => <ItemList item={item} />}
+        renderItem={({item}) => (
+          <ItemList item={item} navigation={navigation} />
+        )}
         onEndReached={loadMore}
         onEndReachedThreshold={0.1}
       />

@@ -1,11 +1,15 @@
 import React from 'react';
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 
-const ItemList = ({item, ...rest}) => (
+const ItemList = ({item, navigation, ...rest}) => (
   <View style={styles.productItem}>
     <Text style={styles.productTitle}>{item.title}</Text>
     <Text style={styles.productDescription}>{item.description}</Text>
-    <TouchableOpacity style={styles.productButton} onPress={() => {}}>
+    <TouchableOpacity
+      style={styles.productButton}
+      onPress={() => {
+        navigation.navigate('Product', {product: item});
+      }}>
       <Text style={styles.buttonText}>Acessar</Text>
     </TouchableOpacity>
   </View>
